@@ -43,10 +43,9 @@ import Sale from "../../models/Sale";
 import DiscountsList from "../discount/DiscountsList";
 import Discount from "../../models/Discount";
 import CreditCard from "../../models/CreditCard";
+import ProductDetail from "./ProductDetail";
 
-function MuiAlert(props: { elevation: number, severity: string, onClose: handleCloseSnackbar, variant: string, children: ReactNode }) {
-    return null;
-}
+
 
 function CloseIcon(props: { fontSize: string }) {
     return null;
@@ -66,7 +65,9 @@ function ProductList() {
     const [isCardSelected, setIsCardSelected] = useState(false);
     const [montoTotal, setMontoTotal] = useState(0);
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [openProductDetail, setOpenProductDetail] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [productSelected, setProductSelected] = useState(null);
 
     const calculateMount = () => {
         if (idCard && idProducts) {
@@ -145,13 +146,6 @@ function ProductList() {
         }
     }
 
-    const handleMouseEnter = () => {
-        setIsHovered(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
 
     const handleCardSelect = (value) => {
         setIdCard(value);
@@ -217,7 +211,7 @@ function ProductList() {
                 color="inherit"
                 onClick={() => handleCloseSnackbar()}
             >
-                <CloseIcon fontSize="small" />
+                <CloseIcon fontSize="small"/>
             </IconButton>
         </React.Fragment>
     );
@@ -231,6 +225,19 @@ function ProductList() {
             action={action}
         />
     );
+
+    const handleProductDetail = (product: Product) => {
+        setProductSelected(product);
+        setOpenProductDetail(true);
+    }
+
+    const handleCloseProductDetail = () => {
+        setOpenProductDetail(false);
+    }
+
+    const handleSnackbar = (boolean: boolean) => {
+        setOpenSnackbar(boolean);
+    }
 
     return (
         <div className="App">
@@ -275,18 +282,17 @@ function ProductList() {
                                                         style={{textAlign: 'center'}}>{data.marca.nombre}</TableCell>
                                                     <TableCell
                                                         style={{textAlign: 'center'}}>{data.categoria.nombre}</TableCell>
-                                                    <TableCell style={{textAlign: 'center'}}>{'$ '}{data.precio}</TableCell>
+                                                    <TableCell
+                                                        style={{textAlign: 'center'}}>{'$ '}{data.precio}</TableCell>
                                                     <TableCell style={{textAlign: 'center'}}>
                                                         <Tooltip title={'Editar'}>
                                                             <IconButton
-                                                                onMouseEnter={handleMouseEnter}
-                                                                onMouseLeave={handleMouseLeave}
-                                                                color={isHovered ? 'primary' : 'default'}
+                                                                // onMouseEnter={handleMouseEnter}
+                                                                // onMouseLeave={handleMouseLeave}
                                                                 style={{marginLeft: 20}}
-                                                                onClick={() => console.log("Se presiono...")}
+                                                                onClick={() => handleProductDetail(data)}
                                                             >
-                                                                {isHovered ? <ModeOutlinedIcon fontSize={'medium'}/> :
-                                                                    <ModeOutlinedIcon fontSize={"medium"}/>}
+                                                                <ModeOutlinedIcon fontSize={"medium"}/>
                                                             </IconButton>
                                                         </Tooltip>
                                                         <Checkbox onChange={() => checkedCheckBox(data.id)}
@@ -353,6 +359,8 @@ function ProductList() {
                     </div>
                 </div>
                 {snackbar}
+                <ProductDetail isOpen={openProductDetail} onClose={handleCloseProductDetail} product={productSelected}
+                               loadProduct={loadProducts} message={setSnackbarMessage} openSnackbar={handleSnackbar}/>
             </header>
         </div>
     );
