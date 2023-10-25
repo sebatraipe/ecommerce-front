@@ -46,7 +46,6 @@ import CreditCard from "../../models/CreditCard";
 import ProductDetail from "./ProductDetail";
 
 
-
 function CloseIcon(props: { fontSize: string }) {
     return null;
 }
@@ -56,7 +55,6 @@ function ProductList() {
     const params = useParams();
     const {idClient} = params;
     const [idProducts, setIdProducts] = useState([]);
-    const [isHovered, setIsHovered] = useState(false);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadingCalculate, setLoadingCalculate] = useState(false);
@@ -68,6 +66,9 @@ function ProductList() {
     const [openProductDetail, setOpenProductDetail] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [productSelected, setProductSelected] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [sales, setSales] = useState([]);
+
 
     const calculateMount = () => {
         if (idCard && idProducts) {
@@ -239,9 +240,38 @@ function ProductList() {
         setOpenSnackbar(boolean);
     }
 
+    const handleCloseListSales = () => {
+        setOpen(!open);
+    }
+
+    const loadSalesRecent = () => {
+        fetch(environment.baseURL + 'ventas-recientes/' + idClient)
+            .then(response => response.json())
+            .then(data => {
+                let ventas = data.map(v => new Sale(v));
+                setSales(ventas);
+            }).catch((error) => {
+            console.log(error);
+        });
+        setOpen(!open);
+    }
+
     return (
         <div className="App">
             <header className="App-header">
+                <div style={{marginTop: -90, marginBottom: 20}}>
+                    <Button
+                        variant={'text'}
+                        onClick={() => loadSalesRecent()}
+                        style={{
+                            fontWeight: 'bold',
+                            fontSize: 15,
+                            marginRight: 925
+                        }}
+                    >
+                        Últimas 3 compras
+                    </Button>
+                </div>
                 <div style={{display: 'flex', width: '90%'}}>
                     <div style={{flex: '1'}}>
                         <Card style={{width: '115%'}}>
@@ -361,6 +391,7 @@ function ProductList() {
                 {snackbar}
                 <ProductDetail isOpen={openProductDetail} onClose={handleCloseProductDetail} product={productSelected}
                                loadProduct={loadProducts} message={setSnackbarMessage} openSnackbar={handleSnackbar}/>
+                <SalesList isOpen={open} onClose={handleCloseListSales} sales={sales}/>
             </header>
         </div>
     );

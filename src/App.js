@@ -48,7 +48,6 @@ function App() {
             .then(response => response.json())
             .then(data => {
                 let ventas = data.map(v => new Sale(v));
-                console.log(ventas);
                 setSales(ventas);
             }).catch((error) => {
             console.log(error);
@@ -90,7 +89,7 @@ function App() {
                             <Button
                                 variant="text"
                                 onClick={() => handleListSale()}
-                                style={{fontWeight: 'bold', marginLeft: 15 , fontSize: 15}}
+                                style={{fontWeight: 'bold', marginLeft: 15, fontSize: 15}}
                             >
                                 Ventas
                             </Button>

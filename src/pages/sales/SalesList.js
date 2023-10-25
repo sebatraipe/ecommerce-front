@@ -22,12 +22,8 @@ function ExpandMoreIcon() {
 
 const SalesList = ({isOpen, onClose, sales}) => {
 
-    const [expandedRow, setExpandedRow] = useState(null);
-
     const getDate = (fechaHora: Date) => {
-
         let fecha = new Date(fechaHora);
-
         const dia = String(fecha.getDate()).padStart(2, '0');
         const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Nota: los meses van de 0 a 11
         const anio = fecha.getFullYear();
